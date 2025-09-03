@@ -1,0 +1,85 @@
+{
+  "name": "service-mesh",
+  "version": "1.0.0",
+  "description": "Sistema de microservicios para gestión de inventario",
+  "services": {
+    "ms-bodega": {
+      "name": "MS-Bodega",
+      "port": 8001,
+      "description": "Gestión de bodegas y ubicaciones geográficas",
+      "endpoints": [
+        "GET /bodegas",
+        "POST /bodegas",
+        "GET /bodegas/{id}/disponibilidad",
+        "PATCH /bodegas/{id}/reservar/{cantidad}"
+      ]
+    },
+    "ms-lote": {
+      "name": "MS-Lote",
+      "port": 8002,
+      "description": "Gestión de lotes y control de almacenamiento",
+      "endpoints": [
+        "GET /lotes",
+        "POST /lotes",
+        "GET /alertas/vencimiento",
+        "GET /lotes/vencidos"
+      ]
+    },
+    "ms-producto": {
+      "name": "MS-Producto",
+      "port": 8003,
+      "description": "Catálogo de productos",
+      "endpoints": [
+        "GET /productos",
+        "POST /productos",
+        "GET /productos/buscar/codigo-barras/{codigo}",
+        "GET /estadisticas/productos"
+      ]
+    },
+    "ms-proyeccion-demanda": {
+      "name": "MS-ProyeccionDemanda",
+      "port": 8004,
+      "description": "Proyección y análisis de demanda",
+      "endpoints": [
+        "GET /proyecciones",
+        "POST /proyecciones",
+        "GET /proyecciones/vigentes",
+        "GET /alertas/demanda"
+      ]
+    },
+    "ms-orden-compra": {
+      "name": "MS-OrdenCompra",
+      "port": 8005,
+      "description": "Gestión de órdenes de compra",
+      "endpoints": [
+        "GET /ordenes",
+        "POST /ordenes",
+        "PATCH /ordenes/{id}/aprobar",
+        "GET /alertas/ordenes"
+      ]
+    },
+    "ms-proveedor": {
+      "name": "MS-Proveedor",
+      "port": 8006,
+      "description": "Gestión de proveedores",
+      "endpoints": [
+        "GET /proveedores",
+        "POST /proveedores",
+        "POST /proveedores/{id}/certificaciones",
+        "GET /alertas/certificaciones"
+      ]
+    }
+  },
+  "architecture": {
+    "pattern": "Microservices",
+    "api_gateway": false,
+    "database": "In-memory simulation",
+    "authentication": false,
+    "monitoring": false
+  },
+  "deployment": {
+    "docker_compose": true,
+    "kubernetes": false,
+    "cloud": false
+  }
+}

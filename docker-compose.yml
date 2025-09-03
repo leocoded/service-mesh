@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  ms-bodega:
+    build:
+      context: ./ms-bodega
+      dockerfile: ../Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - SERVICE_NAME=MS-Bodega
+    volumes:
+      - ./ms-bodega:/app
+    restart: unless-stopped
+
+  ms-lote:
+    build:
+      context: ./ms-lote
+      dockerfile: ../Dockerfile
+    ports:
+      - "8002:8000"
+    environment:
+      - SERVICE_NAME=MS-Lote
+    volumes:
+      - ./ms-lote:/app
+    restart: unless-stopped
+
+  ms-producto:
+    build:
+      context: ./ms-producto
+      dockerfile: ../Dockerfile
+    ports:
+      - "8003:8000"
+    environment:
+      - SERVICE_NAME=MS-Producto
+    volumes:
+      - ./ms-producto:/app
+    restart: unless-stopped
+
+  ms-proyeccion-demanda:
+    build:
+      context: ./ms-proyeccion-demanda
+      dockerfile: ../Dockerfile
+    ports:
+      - "8004:8000"
+    environment:
+      - SERVICE_NAME=MS-ProyeccionDemanda
+    volumes:
+      - ./ms-proyeccion-demanda:/app
+    restart: unless-stopped
+
+  ms-orden-compra:
+    build:
+      context: ./ms-orden-compra
+      dockerfile: ../Dockerfile
+    ports:
+      - "8005:8000"
+    environment:
+      - SERVICE_NAME=MS-OrdenCompra
+    volumes:
+      - ./ms-orden-compra:/app
+    restart: unless-stopped
+
+  ms-proveedor:
+    build:
+      context: ./ms-proveedor
+      dockerfile: ../Dockerfile
+    ports:
+      - "8006:8000"
+    environment:
+      - SERVICE_NAME=MS-Proveedor
+    volumes:
+      - ./ms-proveedor:/app
+    restart: unless-stopped
+
+networks:
+  default:
+    name: service-mesh-network
