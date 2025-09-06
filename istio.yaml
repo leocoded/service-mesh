@@ -1,0 +1,374 @@
+# =====================================
+# 3. Prometheus
+# =====================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.52.0
+        ports:
+        - containerPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: istio-system
+spec:
+  ports:
+  - port: 9090
+    targetPort: 9090
+  selector:
+    app: prometheus
+
+---
+# =====================================
+# 4. Grafana
+# =====================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: istio-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:11.1.0
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: istio-system
+spec:
+  ports:
+  - port: 3000
+    targetPort: 3000
+  selector:
+    app: grafana
+
+---
+# =====================================
+# 5. Microservicios
+# =====================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: service-mesh
+  labels:
+    istio-injection: enabled
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-bodega
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-bodega
+  template:
+    metadata:
+      labels:
+        app: ms-bodega
+    spec:
+      containers:
+        - name: ms-bodega
+          image: ms-bodega:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-bodega
+  namespace: service-mesh
+spec:
+  selector:
+    app: ms-bodega
+  ports:
+    - port: 8001
+      targetPort: 8001
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-lote
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-lote
+  template:
+    metadata:
+      labels:
+        app: ms-lote
+    spec:
+      containers:
+        - name: ms-lote
+          image: ms-lote:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-lote
+  namespace: service-mesh
+spec:
+  selector:
+    app: ms-lote
+  ports:
+    - port: 8002
+      targetPort: 8002
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-orden-compra
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-orden-compra
+  template:
+    metadata:
+      labels:
+        app: ms-orden-compra
+    spec:
+      containers:
+        - name: ms-orden-compra
+          image: ms-orden-compra:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8005
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-orden-compra
+  namespace: service-mesh
+spec:
+  selector:
+    app: ms-orden-compra
+  ports:
+    - port: 8005
+      targetPort: 8005
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-producto
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-producto
+  template:
+    metadata:
+      labels:
+        app: ms-producto
+    spec:
+      containers:
+        - name: ms-producto
+          image: ms-producto:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-producto
+  namespace: service-mesh
+spec:
+  selector:
+    app: ms-producto
+  ports:
+    - port: 8003
+      targetPort: 8003
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-proveedor
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-proveedor
+  template:
+    metadata:
+      labels:
+        app: ms-proveedor
+    spec:
+      containers:
+        - name: ms-proveedor
+          image: ms-proveedor:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8006
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-proveedor
+  namespace: service-mesh
+spec:
+  selector:
+    app: ms-proveedor
+  ports:
+    - port: 8006
+      targetPort: 8006
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-proyeccion-demanda
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-proyeccion-demanda
+  template:
+    metadata:
+      labels:
+        app: ms-proyeccion-demanda
+    spec:
+      containers:
+        - name: ms-proyeccion-demanda
+          image: ms-proyeccion-demanda:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8004
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-proyeccion-demanda
+  namespace: service-mesh
+spec:
+  selector:
+    app: ms-proyeccion-demanda
+  ports:
+    - port: 8004
+      targetPort: 8004
+      name: http
+
+---
+# =====================================
+# 6. Gateway y VirtualService
+# =====================================
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: api-gateway
+  namespace: service-mesh
+spec:
+  selector:
+    istio: ingressgateway  # usa el ingress gateway de Istio
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: api-gateway
+  namespace: service-mesh
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - api-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /bodega
+    route:
+    - destination:
+        host: ms-bodega.service-mesh.svc.cluster.local
+        port:
+          number: 8001
+  - match:
+    - uri:
+        prefix: /lote
+    route:
+    - destination:
+        host: ms-lote.service-mesh.svc.cluster.local
+        port:
+          number: 8002
+  - match:
+    - uri:
+        prefix: /orden-compra
+    route:
+    - destination:
+        host: ms-orden-compra.service-mesh.svc.cluster.local
+        port:
+          number: 8005
+  - match:
+    - uri:
+        prefix: /producto
+    route:
+    - destination:
+        host: ms-producto.service-mesh.svc.cluster.local
+        port:
+          number: 8003
+  - match:
+    - uri:
+        prefix: /proveedor
+    route:
+    - destination:
+        host: ms-proveedor.service-mesh.svc.cluster.local
+        port:
+          number: 8006
+  - match:
+    - uri:
+        prefix: /proyeccion-demanda
+    route:
+    - destination:
+        host: ms-proyeccion-demanda.service-mesh.svc.cluster.local
+        port:
+          number: 8004
