@@ -1,0 +1,122 @@
+[
+  {
+    "nombre": "Bodega Central Bogotá",
+    "capacidad": 1000,
+    "ubicacion_geografica": {
+      "latitud": 4.711,
+      "longitud": -74.0721,
+      "direccion": "Calle 100 #8-20",
+      "ciudad": "Bogotá",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-001"
+  },
+  {
+    "nombre": "Bodega Norte Medellín",
+    "capacidad": 900,
+    "ubicacion_geografica": {
+      "latitud": 6.2442,
+      "longitud": -75.5812,
+      "direccion": "Av. El Poblado 200",
+      "ciudad": "Medellín",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-002"
+  },
+  {
+    "nombre": "Bodega Sur Cali",
+    "capacidad": 850,
+    "ubicacion_geografica": {
+      "latitud": 3.4516,
+      "longitud": -76.532,
+      "direccion": "Cra. 1 #23-45",
+      "ciudad": "Cali",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-003"
+  },
+  {
+    "nombre": "Bodega Este Barranquilla",
+    "capacidad": 800,
+    "ubicacion_geografica": {
+      "latitud": 10.9685,
+      "longitud": -74.7813,
+      "direccion": "Calle 72 #50-10",
+      "ciudad": "Barranquilla",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-004"
+  },
+  {
+    "nombre": "Bodega Oeste Bucaramanga",
+    "capacidad": 750,
+    "ubicacion_geografica": {
+      "latitud": 7.1193,
+      "longitud": -73.1227,
+      "direccion": "Av. Quebradaseca 15-20",
+      "ciudad": "Bucaramanga",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-005"
+  },
+  {
+    "nombre": "Bodega Centro Cartagena",
+    "capacidad": 950,
+    "ubicacion_geografica": {
+      "latitud": 10.391,
+      "longitud": -75.4794,
+      "direccion": "Cra. 3 #31-100",
+      "ciudad": "Cartagena",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-006"
+  },
+  {
+    "nombre": "Bodega Norte Pereira",
+    "capacidad": 700,
+    "ubicacion_geografica": {
+      "latitud": 4.8143,
+      "longitud": -75.6946,
+      "direccion": "Av. 30 de Agosto 45-67",
+      "ciudad": "Pereira",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-007"
+  },
+  {
+    "nombre": "Bodega Sur Manizales",
+    "capacidad": 720,
+    "ubicacion_geografica": {
+      "latitud": 5.0703,
+      "longitud": -75.5138,
+      "direccion": "Cra. 23 #65-10",
+      "ciudad": "Manizales",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-008"
+  },
+  {
+    "nombre": "Bodega Este Ibagué",
+    "capacidad": 680,
+    "ubicacion_geografica": {
+      "latitud": 4.4389,
+      "longitud": -75.2322,
+      "direccion": "Calle 60 #7-20",
+      "ciudad": "Ibagué",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-009"
+  },
+  {
+    "nombre": "Bodega Oeste Cúcuta",
+    "capacidad": 710,
+    "ubicacion_geografica": {
+      "latitud": 7.8939,
+      "longitud": -72.5078,
+      "direccion": "Av. 0 #10-20",
+      "ciudad": "Cúcuta",
+      "pais": "Colombia"
+    },
+    "id_producto": "prod-010"
+  }
+]

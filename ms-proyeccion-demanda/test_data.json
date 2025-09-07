@@ -1,0 +1,142 @@
+[
+  {
+    "id_producto": "prod-001",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1000,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 95.0
+  },
+  {
+    "id_producto": "prod-002",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1100,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 94.0
+  },
+  {
+    "id_producto": "prod-003",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1200,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 93.0
+  },
+  {
+    "id_producto": "prod-004",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1300,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 92.0
+  },
+  {
+    "id_producto": "prod-005",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1400,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 91.0
+  },
+  {
+    "id_producto": "prod-006",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1500,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 90.0
+  },
+  {
+    "id_producto": "prod-007",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1600,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 89.0
+  },
+  {
+    "id_producto": "prod-008",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1700,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 88.0
+  },
+  {
+    "id_producto": "prod-009",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1800,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 87.0
+  },
+  {
+    "id_producto": "prod-010",
+    "fecha_inicio": "2025-09-01",
+    "fecha_fin": "2025-12-31",
+    "tipo_proyeccion": "mensual",
+    "demanda_estimada": 1900,
+    "unidades": "unidades",
+    "metodologia": "historico",
+    "factores_considerados": [
+      "tendencia",
+      "estacionalidad"
+    ],
+    "confianza_porcentaje": 86.0
+  }
+]

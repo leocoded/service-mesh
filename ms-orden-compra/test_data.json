@@ -1,0 +1,152 @@
+[
+  {
+    "id_proveedor": "prov-001",
+    "tipo_orden": "regular",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 1",
+    "direccion_entrega": "Calle 100 #10-1",
+    "items": [
+      {
+        "id_producto": "prod-001",
+        "cantidad": 100,
+        "precio_unitario": 10.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-002",
+    "tipo_orden": "urgente",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 2",
+    "direccion_entrega": "Calle 101 #10-2",
+    "items": [
+      {
+        "id_producto": "prod-002",
+        "cantidad": 110,
+        "precio_unitario": 11.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-003",
+    "tipo_orden": "regular",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 3",
+    "direccion_entrega": "Calle 102 #10-3",
+    "items": [
+      {
+        "id_producto": "prod-003",
+        "cantidad": 120,
+        "precio_unitario": 12.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-004",
+    "tipo_orden": "urgente",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 4",
+    "direccion_entrega": "Calle 103 #10-4",
+    "items": [
+      {
+        "id_producto": "prod-004",
+        "cantidad": 130,
+        "precio_unitario": 13.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-005",
+    "tipo_orden": "regular",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 5",
+    "direccion_entrega": "Calle 104 #10-5",
+    "items": [
+      {
+        "id_producto": "prod-005",
+        "cantidad": 140,
+        "precio_unitario": 14.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-006",
+    "tipo_orden": "urgente",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 6",
+    "direccion_entrega": "Calle 105 #10-6",
+    "items": [
+      {
+        "id_producto": "prod-006",
+        "cantidad": 150,
+        "precio_unitario": 15.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-007",
+    "tipo_orden": "regular",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 7",
+    "direccion_entrega": "Calle 106 #10-7",
+    "items": [
+      {
+        "id_producto": "prod-007",
+        "cantidad": 160,
+        "precio_unitario": 16.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-008",
+    "tipo_orden": "urgente",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 8",
+    "direccion_entrega": "Calle 107 #10-8",
+    "items": [
+      {
+        "id_producto": "prod-008",
+        "cantidad": 170,
+        "precio_unitario": 17.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-009",
+    "tipo_orden": "regular",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 9",
+    "direccion_entrega": "Calle 108 #10-9",
+    "items": [
+      {
+        "id_producto": "prod-009",
+        "cantidad": 180,
+        "precio_unitario": 18.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  },
+  {
+    "id_proveedor": "prov-010",
+    "tipo_orden": "urgente",
+    "fecha_requerida": "2025-09-15",
+    "observaciones": "Pedido de medicamentos lote 10",
+    "direccion_entrega": "Calle 109 #10-10",
+    "items": [
+      {
+        "id_producto": "prod-010",
+        "cantidad": 190,
+        "precio_unitario": 19.5,
+        "descuento_porcentaje": 0
+      }
+    ]
+  }
+]
