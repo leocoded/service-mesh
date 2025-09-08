@@ -1,0 +1,222 @@
+[
+  {
+    "nombre": "Laboratorios Andina S.A.",
+    "email": "contacto@andina.com",
+    "telefono": "+57 1 2345678",
+    "direccion": "Calle 100 #10-20",
+    "ciudad": "Bogotá",
+    "pais": "Colombia",
+    "nit_rut": "900123456-1",
+    "persona_contacto": "Ana Martínez",
+    "especialidades": [
+      "antibióticos",
+      "analgésicos"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 3,
+      "cantidad_minima": 50,
+      "costo_envio": 100.0,
+      "area_cobertura": "Nacional",
+      "restricciones": [
+        "Sin entregas domingos"
+      ]
+    }
+  },
+  {
+    "nombre": "Distribuidora FarmaPlus",
+    "email": "ventas@farmaplus.com",
+    "telefono": "+57 2 8765432",
+    "direccion": "Av. Las Américas 45-67",
+    "ciudad": "Cali",
+    "pais": "Colombia",
+    "nit_rut": "900234567-2",
+    "persona_contacto": "Carlos Gómez",
+    "especialidades": [
+      "antihipertensivos",
+      "antialérgicos"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 2,
+      "cantidad_minima": 30,
+      "costo_envio": 80.0,
+      "area_cobertura": "Valle del Cauca",
+      "restricciones": []
+    }
+  },
+  {
+    "nombre": "Medicamentos del Caribe",
+    "email": "info@medcaribe.com",
+    "telefono": "+57 5 1234567",
+    "direccion": "Cra. 50 #72-10",
+    "ciudad": "Barranquilla",
+    "pais": "Colombia",
+    "nit_rut": "900345678-3",
+    "persona_contacto": "Laura Torres",
+    "especialidades": [
+      "antibióticos",
+      "antipiréticos"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 4,
+      "cantidad_minima": 40,
+      "costo_envio": 120.0,
+      "area_cobertura": "Costa Atlántica",
+      "restricciones": [
+        "Solo días hábiles"
+      ]
+    }
+  },
+  {
+    "nombre": "Farmacéutica Nacional",
+    "email": "servicio@farmanac.com",
+    "telefono": "+57 4 7654321",
+    "direccion": "Av. El Poblado 200",
+    "ciudad": "Medellín",
+    "pais": "Colombia",
+    "nit_rut": "900456789-4",
+    "persona_contacto": "Jorge Ruiz",
+    "especialidades": [
+      "cardiovasculares",
+      "antidiabéticos"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 1,
+      "cantidad_minima": 20,
+      "costo_envio": 60.0,
+      "area_cobertura": "Antioquia",
+      "restricciones": []
+    }
+  },
+  {
+    "nombre": "BioSalud S.A.S.",
+    "email": "contacto@biosalud.com",
+    "telefono": "+57 1 3456789",
+    "direccion": "Calle 80 #15-30",
+    "ciudad": "Bogotá",
+    "pais": "Colombia",
+    "nit_rut": "900567890-5",
+    "persona_contacto": "María Fernanda López",
+    "especialidades": [
+      "vacunas",
+      "antivirales"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 5,
+      "cantidad_minima": 60,
+      "costo_envio": 150.0,
+      "area_cobertura": "Cundinamarca",
+      "restricciones": [
+        "Requiere refrigeración"
+      ]
+    }
+  },
+  {
+    "nombre": "Droguería Universal",
+    "email": "ventas@drogueriauniversal.com",
+    "telefono": "+57 2 2345678",
+    "direccion": "Cra. 15 #30-50",
+    "ciudad": "Palmira",
+    "pais": "Colombia",
+    "nit_rut": "900678901-6",
+    "persona_contacto": "Pedro Salazar",
+    "especialidades": [
+      "analgésicos",
+      "antigripales"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 2,
+      "cantidad_minima": 25,
+      "costo_envio": 70.0,
+      "area_cobertura": "Valle del Cauca",
+      "restricciones": []
+    }
+  },
+  {
+    "nombre": "Salud Total Proveedores",
+    "email": "proveedores@saludtotal.com",
+    "telefono": "+57 5 3456789",
+    "direccion": "Av. Circunvalar 100",
+    "ciudad": "Cartagena",
+    "pais": "Colombia",
+    "nit_rut": "900789012-7",
+    "persona_contacto": "Diana Castro",
+    "especialidades": [
+      "antibióticos",
+      "antifúngicos"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 3,
+      "cantidad_minima": 35,
+      "costo_envio": 90.0,
+      "area_cobertura": "Costa Caribe",
+      "restricciones": [
+        "Sin entregas festivos"
+      ]
+    }
+  },
+  {
+    "nombre": "Red Farma Express",
+    "email": "contacto@redfarma.com",
+    "telefono": "+57 4 4567890",
+    "direccion": "Calle 50 #20-40",
+    "ciudad": "Medellín",
+    "pais": "Colombia",
+    "nit_rut": "900890123-8",
+    "persona_contacto": "Felipe Ramírez",
+    "especialidades": [
+      "antihipertensivos",
+      "anticoagulantes"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 2,
+      "cantidad_minima": 45,
+      "costo_envio": 110.0,
+      "area_cobertura": "Antioquia",
+      "restricciones": []
+    }
+  },
+  {
+    "nombre": "Colmedic S.A.",
+    "email": "info@colmedic.com",
+    "telefono": "+57 1 4567890",
+    "direccion": "Av. Suba 300",
+    "ciudad": "Bogotá",
+    "pais": "Colombia",
+    "nit_rut": "900901234-9",
+    "persona_contacto": "Gloria Pérez",
+    "especialidades": [
+      "antibióticos",
+      "antipiréticos"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 4,
+      "cantidad_minima": 55,
+      "costo_envio": 130.0,
+      "area_cobertura": "Cundinamarca",
+      "restricciones": [
+        "Solo días hábiles"
+      ]
+    }
+  },
+  {
+    "nombre": "Farmadistribuciones Ltda.",
+    "email": "ventas@farmadistribuciones.com",
+    "telefono": "+57 2 5678901",
+    "direccion": "Cra. 40 #60-80",
+    "ciudad": "Cali",
+    "pais": "Colombia",
+    "nit_rut": "900012345-0",
+    "persona_contacto": "Ricardo Mendoza",
+    "especialidades": [
+      "antidiabéticos",
+      "antihistamínicos"
+    ],
+    "condiciones_entrega": {
+      "tiempo_entrega": 3,
+      "cantidad_minima": 60,
+      "costo_envio": 95.0,
+      "area_cobertura": "Valle del Cauca",
+      "restricciones": []
+    }
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "fecha_vencimiento": "2026-01-15",
+    "tipo_almacenamiento": "refrigerado",
+    "cantidad_inicial": 100,
+    "id_producto": "prod-001",
+    "id_bodega": "bod-001",
+    "temperatura_optima": 4.0,
+    "humedad_optima": 60.0
+  },
+  {
+    "fecha_vencimiento": "2025-12-10",
+    "tipo_almacenamiento": "ambiente",
+    "cantidad_inicial": 200,
+    "id_producto": "prod-002",
+    "id_bodega": "bod-002",
+    "temperatura_optima": 20.0,
+    "humedad_optima": 50.0
+  },
+  {
+    "fecha_vencimiento": "2026-03-20",
+    "tipo_almacenamiento": "seco",
+    "cantidad_inicial": 150,
+    "id_producto": "prod-003",
+    "id_bodega": "bod-003",
+    "temperatura_optima": 18.0,
+    "humedad_optima": 40.0
+  },
+  {
+    "fecha_vencimiento": "2025-11-05",
+    "tipo_almacenamiento": "congelado",
+    "cantidad_inicial": 80,
+    "id_producto": "prod-004",
+    "id_bodega": "bod-004",
+    "temperatura_optima": -18.0,
+    "humedad_optima": 30.0
+  },
+  {
+    "fecha_vencimiento": "2026-02-28",
+    "tipo_almacenamiento": "refrigerado",
+    "cantidad_inicial": 120,
+    "id_producto": "prod-005",
+    "id_bodega": "bod-005",
+    "temperatura_optima": 5.0,
+    "humedad_optima": 55.0
+  },
+  {
+    "fecha_vencimiento": "2025-10-15",
+    "tipo_almacenamiento": "ambiente",
+    "cantidad_inicial": 90,
+    "id_producto": "prod-006",
+    "id_bodega": "bod-006",
+    "temperatura_optima": 22.0,
+    "humedad_optima": 45.0
+  },
+  {
+    "fecha_vencimiento": "2026-04-10",
+    "tipo_almacenamiento": "seco",
+    "cantidad_inicial": 110,
+    "id_producto": "prod-007",
+    "id_bodega": "bod-007",
+    "temperatura_optima": 17.0,
+    "humedad_optima": 35.0
+  },
+  {
+    "fecha_vencimiento": "2025-09-30",
+    "tipo_almacenamiento": "congelado",
+    "cantidad_inicial": 60,
+    "id_producto": "prod-008",
+    "id_bodega": "bod-008",
+    "temperatura_optima": -20.0,
+    "humedad_optima": 25.0
+  },
+  {
+    "fecha_vencimiento": "2026-05-25",
+    "tipo_almacenamiento": "refrigerado",
+    "cantidad_inicial": 130,
+    "id_producto": "prod-009",
+    "id_bodega": "bod-009",
+    "temperatura_optima": 3.0,
+    "humedad_optima": 65.0
+  },
+  {
+    "fecha_vencimiento": "2025-08-20",
+    "tipo_almacenamiento": "ambiente",
+    "cantidad_inicial": 140,
+    "id_producto": "prod-010",
+    "id_bodega": "bod-010",
+    "temperatura_optima": 21.0,
+    "humedad_optima": 48.0
+  }
+]
