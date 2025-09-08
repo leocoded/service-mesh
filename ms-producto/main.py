@@ -46,6 +46,7 @@ async def crear_producto(producto: ProductoCreate):
     }
     
     productos_db[producto_id] = nuevo_producto
+    print(f"Producto creado: {nuevo_producto}")
     return ProductoResponse(**nuevo_producto)
 
 @app.get("/productos", response_model=List[ProductoResponse], tags=["Productos"])

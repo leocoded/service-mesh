@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tcpdump
+  namespace: istio-system
+spec:
+  hostNetwork: true
+  containers:
+  - name: tcpdump
+    image: corfr/tcpdump
+    command: ["/bin/sh", "-c", "sleep infinity"]
+    securityContext:
+      privileged: true
+      capabilities:
+        add: ["NET_ADMIN", "NET_RAW"]
+  restartPolicy: Never

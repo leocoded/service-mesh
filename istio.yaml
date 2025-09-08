@@ -1,79 +1,5 @@
 # =====================================
-# 3. Prometheus
-# =====================================
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: prometheus
-  namespace: istio-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: prometheus
-  template:
-    metadata:
-      labels:
-        app: prometheus
-    spec:
-      containers:
-      - name: prometheus
-        image: prom/prometheus:v2.52.0
-        ports:
-        - containerPort: 9090
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: prometheus
-  namespace: istio-system
-spec:
-  ports:
-  - port: 9090
-    targetPort: 9090
-  selector:
-    app: prometheus
-
----
-# =====================================
-# 4. Grafana
-# =====================================
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: grafana
-  namespace: istio-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: grafana
-  template:
-    metadata:
-      labels:
-        app: grafana
-    spec:
-      containers:
-      - name: grafana
-        image: grafana/grafana:11.1.0
-        ports:
-        - containerPort: 3000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: grafana
-  namespace: istio-system
-spec:
-  ports:
-  - port: 3000
-    targetPort: 3000
-  selector:
-    app: grafana
-
----
-# =====================================
-# 5. Microservicios
+# Microservicios
 # =====================================
 apiVersion: v1
 kind: Namespace
@@ -294,17 +220,17 @@ spec:
 
 ---
 # =====================================
-# 6. Gateway y VirtualService
+# Gateway y VirtualService
 # =====================================
 
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
   name: api-gateway
   namespace: service-mesh
 spec:
   selector:
-    istio: ingressgateway  # usa el ingress gateway de Istio
+    istio: ingressgateway
   servers:
   - port:
       number: 80
@@ -313,7 +239,7 @@ spec:
     hosts:
     - "*"
 ---
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: api-gateway
@@ -329,7 +255,7 @@ spec:
         prefix: /bodega
     route:
     - destination:
-        host: ms-bodega.service-mesh.svc.cluster.local
+        host: ms-bodega
         port:
           number: 8001
   - match:
@@ -337,7 +263,7 @@ spec:
         prefix: /lote
     route:
     - destination:
-        host: ms-lote.service-mesh.svc.cluster.local
+        host: ms-lote
         port:
           number: 8002
   - match:
@@ -345,7 +271,7 @@ spec:
         prefix: /orden-compra
     route:
     - destination:
-        host: ms-orden-compra.service-mesh.svc.cluster.local
+        host: ms-orden-compra
         port:
           number: 8005
   - match:
@@ -353,7 +279,7 @@ spec:
         prefix: /producto
     route:
     - destination:
-        host: ms-producto.service-mesh.svc.cluster.local
+        host: ms-producto
         port:
           number: 8003
   - match:
@@ -361,7 +287,7 @@ spec:
         prefix: /proveedor
     route:
     - destination:
-        host: ms-proveedor.service-mesh.svc.cluster.local
+        host: ms-proveedor
         port:
           number: 8006
   - match:
@@ -369,6 +295,6 @@ spec:
         prefix: /proyeccion-demanda
     route:
     - destination:
-        host: ms-proyeccion-demanda.service-mesh.svc.cluster.local
+        host: ms-proyeccion-demanda
         port:
           number: 8004
