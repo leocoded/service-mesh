@@ -3,6 +3,9 @@ from typing import List, Optional
 from datetime import datetime, date, timedelta
 from decimal import Decimal
 import uuid
+import os
+import json
+import httpx
 from models import (
     OrdenCompraCreate, ItemOrdenCreate, OrdenCompraUpdate,
     OrdenCompraResponse, ItemOrdenResponse, OrdenCompraFilter,
@@ -18,7 +21,7 @@ app = FastAPI(
 
 # Simulación de base de datos en memoria
 ordenes_db = {}
-items_orden_db = {}  # {orden_id: [items]}
+items_orden_db = {}
 contador_orden = 1
 
 def generar_numero_orden() -> str:
@@ -27,6 +30,63 @@ def generar_numero_orden() -> str:
     numero = f"OC{contador_orden:06d}"
     contador_orden += 1
     return numero
+
+def cargar_ordenes_desde_json():
+    ruta = os.path.join(os.path.dirname(__file__), "test_data.json")
+    if not os.path.exists(ruta):
+        return {}, {}, 1
+    with open(ruta, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    ordenes = {}
+    items_por_orden = {}
+    max_num = 0
+    for orden in data:
+        orden_id = orden.get("id") or str(uuid.uuid4())
+        ordenes[orden_id] = {
+            "id": orden_id,
+            "numero_orden": generar_numero_orden(),
+            "id_proveedor": orden["id_proveedor"],
+            "tipo_orden": orden["tipo_orden"],
+            "estado": EstadoOrden.DRAFT,
+            "fecha_orden": date.today(),
+            "fecha_requerida": date.fromisoformat(orden["fecha_requerida"]) if isinstance(orden["fecha_requerida"], str) else orden["fecha_requerida"],
+            "observaciones": orden.get("observaciones", None),
+            "direccion_entrega": orden.get("direccion_entrega", None),
+            "fecha_creacion": datetime.now(),
+            "fecha_actualizacion": datetime.now(),
+            "subtotal": orden.get("subtotal", 0),
+            "descuento_total": orden.get("descuento_total", 0),
+            "impuestos": orden.get("impuestos", 0),
+            "total": orden.get("total", 0),
+            "fecha_aprobacion": datetime.fromisoformat(orden["fecha_aprobacion"]) if orden.get("fecha_aprobacion") else None,
+            "fecha_envio": datetime.fromisoformat(orden["fecha_envio"]) if orden.get("fecha_envio") else None,
+            "fecha_recepcion": datetime.fromisoformat(orden["fecha_recepcion"]) if orden.get("fecha_recepcion") else None
+        }
+        # Items
+        items = []
+        for item in orden.get("items", []):
+            items.append({
+                "id": item.get("id") or str(uuid.uuid4()),
+                "id_producto": item["id_producto"],
+                "cantidad": item["cantidad"],
+                "precio_unitario": item["precio_unitario"],
+                "descuento_porcentaje": item.get("descuento_porcentaje", 0),
+                "subtotal": item.get("subtotal", item["precio_unitario"] * item["cantidad"]),
+                "total_item": item.get("total_item", (item["precio_unitario"] * item["cantidad"]) - (item["precio_unitario"] * item["cantidad"] * item.get("descuento_porcentaje", 0) / 100))
+            })
+        items_por_orden[orden_id] = items
+        # Calcular el máximo número de orden para el contador
+        try:
+            num = int(orden["numero_orden"].replace("OC", ""))
+            if num > max_num:
+                max_num = num
+        except:
+            pass
+    return ordenes, items_por_orden, max_num + 1
+
+ordenes_db, items_orden_db, contador_orden = cargar_ordenes_desde_json()
+
+
 
 def calcular_totales_orden(orden_id: str) -> dict:
     """Calcular totales de una orden"""
@@ -163,6 +223,14 @@ async def obtener_orden(orden_id: str):
     orden = ordenes_db[orden_id]
     items = items_orden_db.get(orden_id, [])
     items_response = [ItemOrdenResponse(**item) for item in items]
+
+    async with httpx.AsyncClient() as client:
+        proveedor_resp = await client.get(f"http://ms-proveedor:8006/proveedores/{orden['id_proveedor']}")
+        proveedor = proveedor_resp.json()
+        print(proveedor)
+        producto_resp = await client.get(f"http://ms-producto:8003/productos/{items[0]['id_producto']}")
+        producto = producto_resp.json()
+        print(producto)
     
     return OrdenCompraResponse(**orden, items=items_response)
 

@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime, date, timedelta
 import uuid
+import os
+import json
 from models import (
     ProyeccionDemandaCreate, ProyeccionDemandaUpdate, ProyeccionDemandaResponse,
     DetalleProyeccion, ProyeccionAgregada, AlertaDemanda,
@@ -16,6 +18,34 @@ app = FastAPI(
 
 # Simulación de base de datos en memoria
 proyecciones_db = {}
+
+def cargar_proyecciones_desde_json():
+    ruta = os.path.join(os.path.dirname(__file__), "test_data.json")
+    if not os.path.exists(ruta):
+        return {}
+    with open(ruta, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    proyecciones = {}
+    for proy in data:
+        proy_id = proy.get("id") or str(uuid.uuid4())
+        proyecciones[proy_id] = {
+            "id": proy_id,
+            "id_producto": proy["id_producto"],
+            "fecha_inicio": date.fromisoformat(proy["fecha_inicio"]) if isinstance(proy["fecha_inicio"], str) else proy["fecha_inicio"],
+            "fecha_fin": date.fromisoformat(proy["fecha_fin"]) if isinstance(proy["fecha_fin"], str) else proy["fecha_fin"],
+            "tipo_proyeccion": proy["tipo_proyeccion"],
+            "demanda_estimada": proy["demanda_estimada"],
+            "unidades": proy["unidades"],
+            "metodologia": proy["metodologia"],
+            "factores_considerados": proy.get("factores_considerados", []),
+            "confianza_porcentaje": proy["confianza_porcentaje"],
+            "estado": proy.get("estado", EstadoProyeccion.DRAFT),
+            "fecha_creacion": datetime.now(),
+            "fecha_actualizacion": datetime.now()
+        }
+    return proyecciones
+
+proyecciones_db = cargar_proyecciones_desde_json()
 
 def calcular_metricas_proyeccion(proyeccion: dict) -> dict:
     """Calcular métricas derivadas de la proyección"""

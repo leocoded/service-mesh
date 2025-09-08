@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime, date, timedelta
 import uuid
+import os
+import json
 from models import (
     ProveedorCreate, ProveedorUpdate, ProveedorResponse, ProveedorFilter,
     CertificacionSanitaria, ProveedorEvaluacion, ProveedorEstadisticas,
@@ -16,6 +18,39 @@ app = FastAPI(
 
 # Simulación de base de datos en memoria
 proveedores_db = {}
+
+def cargar_proveedores_desde_json():
+    ruta = os.path.join(os.path.dirname(__file__), "test_data.json")
+    if not os.path.exists(ruta):
+        return {}
+    with open(ruta, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    proveedores = {}
+    for prov in data:
+        prov_id = prov.get("id") or str(uuid.uuid4())
+        proveedores[prov_id] = {
+            "id": prov_id,
+            "nombre": prov["nombre"],
+            "email": str(prov["email"]),
+            "telefono": prov["telefono"],
+            "direccion": prov["direccion"],
+            "ciudad": prov["ciudad"],
+            "pais": prov["pais"],
+            "nit_rut": prov["nit_rut"],
+            "persona_contacto": prov["persona_contacto"],
+            "especialidades": prov["especialidades"],
+            "condiciones_entrega": prov["condiciones_entrega"],
+            "estado": prov.get("estado", EstadoProveedor.PENDING),
+            "calificacion": prov.get("calificacion", None),
+            "total_ordenes": prov.get("total_ordenes", 0),
+            "fecha_ultimo_pedido": datetime.now(),
+            "fecha_creacion": datetime.now(),
+            "fecha_actualizacion": datetime.now()
+        }
+    return proveedores
+
+proveedores_db = cargar_proveedores_desde_json()
+
 certificaciones_db = {}  # {proveedor_id: [certificaciones]}
 evaluaciones_db = {}  # {proveedor_id: [evaluaciones]}
 
@@ -80,7 +115,7 @@ async def crear_proveedor(proveedor: ProveedorCreate):
     
     return ProveedorResponse(
         **nuevo_proveedor,
-        condiciones_entrega=CondicionesEntrega(**nuevo_proveedor["condiciones_entrega"]),
+        #condiciones_entrega=CondicionesEntrega(**nuevo_proveedor["condiciones_entrega"]),
         certificaciones=[]
     )
 
@@ -135,7 +170,7 @@ async def listar_proveedores(
         
         proveedores_response.append(ProveedorResponse(
             **proveedor,
-            condiciones_entrega=CondicionesEntrega(**proveedor["condiciones_entrega"]),
+            #condiciones_entrega=CondicionesEntrega(**proveedor["condiciones_entrega"]),
             certificaciones=certificaciones
         ))
     
@@ -153,7 +188,7 @@ async def obtener_proveedor(proveedor_id: str):
     
     return ProveedorResponse(
         **proveedor,
-        condiciones_entrega=CondicionesEntrega(**proveedor["condiciones_entrega"]),
+        #condiciones_entrega=CondicionesEntrega(**proveedor["condiciones_entrega"]),
         certificaciones=certificaciones
     )
 

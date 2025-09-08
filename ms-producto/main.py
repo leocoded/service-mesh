@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime
 import uuid
+import os
+import json
 from models import (
     ProductoCreate, ProductoUpdate, ProductoResponse, ProductoFilter,
     ProductoStock, CategoriaProducto, UnidadMedida
@@ -15,6 +17,36 @@ app = FastAPI(
 
 # Simulación de base de datos en memoria
 productos_db = {}
+
+def cargar_productos_desde_json():
+    ruta = os.path.join(os.path.dirname(__file__), "test_data.json")
+    if not os.path.exists(ruta):
+        return {}
+    with open(ruta, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    productos = {}
+    for producto in data:
+        producto_id = producto.get("id") or str(uuid.uuid4())
+        productos[producto_id] = {
+            "id": producto_id,
+            "nombre": producto["nombre"],
+            "descripcion": producto["descripcion"],
+            "categoria": producto["categoria"],
+            "unidad_medida": producto["unidad_medida"],
+            "precio_unitario": producto["precio_unitario"],
+            "codigo_barras": producto["codigo_barras"],
+            "peso_unitario": producto["peso_unitario"],
+            "requiere_refrigeracion": producto["requiere_refrigeracion"],
+            "vida_util_dias": producto["vida_util_dias"],
+            "activo": producto.get("activo", True),
+            "fecha_creacion": datetime.now(),
+            "fecha_actualizacion": datetime.now(),
+            "stock_total": producto.get("stock_total", 0),
+            "bodegas_disponibles": producto.get("bodegas_disponibles", 0)
+        }
+    return productos
+
+productos_db = cargar_productos_desde_json()
 
 @app.get("/", tags=["Health"])
 async def root():

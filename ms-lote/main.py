@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime, date, timedelta
 import uuid
+import os
+import json
 from models import (
     LoteCreate, LoteUpdate, LoteResponse, LoteFilter, 
     AlertaVencimiento, TipoAlmacenamiento
@@ -16,13 +18,44 @@ app = FastAPI(
 # Simulación de base de datos en memoria
 lotes_db = {}
 
+def esta_vencido(fecha_vencimiento: date) -> bool:
+    """Verificar si un lote está vencido"""
+    return fecha_vencimiento < date.today()
+
+def cargar_lotes_desde_json():
+    ruta = os.path.join(os.path.dirname(__file__), "test_data.json")
+    if not os.path.exists(ruta):
+        return {}
+    with open(ruta, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    lotes = {}
+    for lote in data:
+        lote_id = lote.get("id") or str(uuid.uuid4())
+        lotes[lote_id] = {
+            "id": lote_id,
+            "fecha_vencimiento": date.fromisoformat(lote["fecha_vencimiento"]) if isinstance(lote["fecha_vencimiento"], str) else lote["fecha_vencimiento"],
+            "tipo_almacenamiento": lote["tipo_almacenamiento"],
+            "cantidad_inicial": lote["cantidad_inicial"],
+            "cantidad_disponible": lote.get("cantidad_disponible", lote["cantidad_inicial"]),
+            "cantidad_reservada": lote.get("cantidad_reservada", 0),
+            "cantidad_vendida": lote.get("cantidad_vendida", 0),
+            "id_producto": lote["id_producto"],
+            "id_bodega": lote["id_bodega"],
+            "temperatura_optima": lote["temperatura_optima"],
+            "humedad_optima": lote["humedad_optima"],
+            "fecha_creacion": datetime.now(),
+            "fecha_actualizacion": datetime.now(),
+            "esta_vencido": esta_vencido(date.fromisoformat(lote["fecha_vencimiento"]) if isinstance(lote["fecha_vencimiento"], str) else lote["fecha_vencimiento"])
+        }
+    return lotes
+
+lotes_db = cargar_lotes_desde_json()
+
 def calcular_dias_vencimiento(fecha_vencimiento: date) -> int:
     """Calcular días para el vencimiento"""
     return (fecha_vencimiento - date.today()).days
 
-def esta_vencido(fecha_vencimiento: date) -> bool:
-    """Verificar si un lote está vencido"""
-    return fecha_vencimiento < date.today()
+
 
 @app.get("/", tags=["Health"])
 async def root():

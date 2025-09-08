@@ -3,6 +3,8 @@ from fastapi.responses import JSONResponse
 from typing import List, Optional
 from datetime import datetime
 import uuid
+import os
+import json
 from models import BodegaCreate, BodegaUpdate, BodegaResponse, BodegaFilter
 
 app = FastAPI(
@@ -13,6 +15,32 @@ app = FastAPI(
 
 # Simulación de base de datos en memoria
 bodegas_db = {}
+
+def cargar_bodegas_desde_json():
+    ruta = os.path.join(os.path.dirname(__file__), "test_data.json")
+    if not os.path.exists(ruta):
+        return {}
+    with open(ruta, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    bodegas = {}
+    for bodega in data:
+        # Ajustar a lo definido en models.py (BodegaResponse)
+        bodega_id = bodega.get("id") or str(uuid.uuid4())
+        bodegas[bodega_id] = {
+            "id": bodega_id,
+            "nombre": bodega["nombre"],
+            "capacidad": bodega["capacidad"],
+            "ubicacion_geografica": bodega["ubicacion_geografica"],
+            "cantidad_disponible": bodega.get("cantidad_disponible", bodega["capacidad"]),
+            "cantidad_reservada": bodega.get("cantidad_reservada", 0),
+            "cantidad_vendida": bodega.get("cantidad_vendida", 0),
+            "id_producto": bodega["id_producto"],
+            "fecha_creacion": datetime.now(),
+            "fecha_actualizacion": datetime.now()
+        }
+    return bodegas
+
+bodegas_db = cargar_bodegas_desde_json()
 
 @app.get("/", tags=["Health"])
 async def root():
