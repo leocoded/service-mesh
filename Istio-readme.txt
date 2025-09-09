@@ -20,7 +20,6 @@ sudo systemctl enable --now docker
 # Usar Docker sin sudo
 sudo usermod -aG docker $USER
 newgrp docker
-docker run --rm hello-world
 
 
 2) Instalar kubectl, Minikube, Helm, istioctl
@@ -43,33 +42,72 @@ istioctl version --remote=false
 
 
 3) Levantar Kubernetes con Minikube (Docker driver)
-minikube start --driver=docker --cpus=4 --memory=8192
+minikube start --driver=docker --cpus=4 --memory=10240 #Modificar el valor de memoria según necesidades
 
 
 4) Instalar Istio (perfil “demo” para laboratorio)
 istioctl install --set profile=demo -y
 cd ~/Downloads/istio-1.27.0/	#O ingresar a la carpeta donde se descargó el istio
-kubectl apply -f samples/addons/kiali.yaml
 
 
-5) Generar las imágenes de los microservicios
-cd ~ #O ingresar a la carpeta del repositorio
+5)Instalar los addons de istio (Kiali, Grafana, Prometheus, Loki, Jaeger)
+kubectl apply -f samples/addons
+
+
+6) Generar las imágenes de los microservicios
+cd ~/arquitectura/repo/service-mesh #O ingresar a la carpeta del repositorio
 minikube image build -t ms-bodega:latest ./ms-bodega
-#repetir el comando anterior con los otros 5 microservicios
+minikube image build -t ms-lote:latest ./ms-lote
+minikube image build -t ms-orden-compra:latest ./ms-orden-compra
+minikube image build -t ms-producto:latest ./ms-producto
+minikube image build -t ms-proveedor:latest ./ms-proveedor
+minikube image build -t ms-proyeccion-demanda:latest ./ms-proyeccion-demanda
 
 
-6) Desplegar los microservicios en istio
-cd ~	#O ingresar a la carpeta del repositorio, donde está el archivo istio.yaml
+7) Desplegar los microservicios en istio
+cd ~/arquitectura/repo/service-mesh #O ingresar a la carpeta del repositorio
 kubectl apply -f istio.yaml
 
 
-7) Verificar microservicios
+8) Verificar microservicios
 #Si todo sale bien, al ejecutar los siguientes comandos deben salir los pods del istio y de los microservicios
 kubectl get pods -n istio-system
 kubectl get pods -n service-mesh
 
 
-8) Hacer port forwarding para visualizar kiali
-kubectl port-forward svc/kiali -n istio-system 20001:20001
-# Navega a:
-# http://localhost:20001
+9) Hacer port forwarding para visualizar los addons
+cd ~/arquitectura/repo/service-mesh #O ingresar a la carpeta del repositorio
+./istio-port-forward.sh
+
+
+10) Instalar promtail
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install promtail grafana/promtail -n istio-system
+
+
+11) Configurar telemetría para modificar el sampling de eventos de tráfico
+istioctl install -f ./tracing.yaml --skip-confirmation
+kubectl apply -f ./telemetry.yaml
+helm upgrade --install promtail grafana/promtail \
+  --namespace istio-system \
+  -f promtail-values.yaml
+
+
+12) Activar el tunner de minikube
+minikube tunnel #bloquea la terminal
+kubectl get svc -n istio-system istio-ingressgateway # Para ver el puerto usado para los requests
+
+
+13) Hacer port forwarding para visualizar Jaeger
+kubectl port-forward pod/<nombre-jaeger-pod> -n istio-system 16686:16686
+
+
+14) Activar el mTLS estricto
+kubectl apply -f peerauth-strict.yaml
+
+
+15) Desplegar pod con tcpdump para visualizar tráfico
+kubectl apply -f tcpdump.yaml
+kubectl exec -it tcpdump -n istio-system -- sh
+tcpdump -i any -A -s 0 port 8003

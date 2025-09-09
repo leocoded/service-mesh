@@ -268,7 +268,7 @@ spec:
           number: 8002
   - match:
     - uri:
-        prefix: /orden-compra
+        prefix: /orden
     route:
     - destination:
         host: ms-orden-compra
@@ -292,7 +292,7 @@ spec:
           number: 8006
   - match:
     - uri:
-        prefix: /proyeccion-demanda
+        prefix: /proyeccion
     route:
     - destination:
         host: ms-proyeccion-demanda
