@@ -252,7 +252,7 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /bodega
+        prefix: /bodegas
     route:
     - destination:
         host: ms-bodega
@@ -260,7 +260,7 @@ spec:
           number: 8001
   - match:
     - uri:
-        prefix: /lote
+        prefix: /lotes
     route:
     - destination:
         host: ms-lote
@@ -268,7 +268,7 @@ spec:
           number: 8002
   - match:
     - uri:
-        prefix: /orden
+        prefix: /ordenes
     route:
     - destination:
         host: ms-orden-compra
@@ -276,7 +276,7 @@ spec:
           number: 8005
   - match:
     - uri:
-        prefix: /producto
+        prefix: /productos
     route:
     - destination:
         host: ms-producto
@@ -284,7 +284,7 @@ spec:
           number: 8003
   - match:
     - uri:
-        prefix: /proveedor
+        prefix: /proveedores
     route:
     - destination:
         host: ms-proveedor
@@ -292,7 +292,7 @@ spec:
           number: 8006
   - match:
     - uri:
-        prefix: /proyeccion
+        prefix: /proyecciones
     route:
     - destination:
         host: ms-proyeccion-demanda
