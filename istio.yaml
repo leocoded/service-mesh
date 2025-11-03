@@ -217,6 +217,41 @@ spec:
     - port: 8004
       targetPort: 8004
       name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-analytics
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-analytics
+  template:
+    metadata:
+      labels:
+        app: ms-analytics
+    spec:
+      containers:
+        - name: ms-analytics
+          image: ms-analytics:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8010
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-analytics
+  namespace: service-mesh
+spec:
+  selector:
+    app: ms-analytics
+  ports:
+    - port: 8010
+      targetPort: 8010
+      name: http
 
 ---
 # =====================================
@@ -230,7 +265,7 @@ metadata:
   namespace: service-mesh
 spec:
   selector:
-    istio: ingressgateway
+    app: istio-ingress
   servers:
   - port:
       number: 80
@@ -252,12 +287,92 @@ spec:
   http:
   - match:
     - uri:
+        exact: /bodegas/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-bodega
+        port:
+          number: 8001
+  - match:
+    - uri:
+        exact: /bodegas/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-bodega
+        port:
+          number: 8001
+  - match:
+    - uri:
+        exact: /bodegas/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-bodega
+        port:
+          number: 8001
+  - match:
+    - uri:
+        exact: /bodegas/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-bodega
+        port:
+          number: 8001
+  - match:
+    - uri:
         prefix: /bodegas
     route:
     - destination:
         host: ms-bodega
         port:
           number: 8001
+  - match:
+    - uri:
+        exact: /lotes/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-lote
+        port:
+          number: 8002
+  - match:
+    - uri:
+        exact: /lotes/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-lote
+        port:
+          number: 8002
+  - match:
+    - uri:
+        exact: /lotes/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-lote
+        port:
+          number: 8002
+  - match:
+    - uri:
+        exact: /lotes/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-lote
+        port:
+          number: 8002
   - match:
     - uri:
         prefix: /lotes
@@ -268,12 +383,52 @@ spec:
           number: 8002
   - match:
     - uri:
+        exact: /ordenes/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-orden-compra
+        port:
+          number: 8005
+  - match:
+    - uri:
+        exact: /ordenes/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-orden-compra
+        port:
+          number: 8005
+  - match:
+    - uri:
         prefix: /ordenes
     route:
     - destination:
         host: ms-orden-compra
         port:
           number: 8005
+  - match:
+    - uri:
+        exact: /productos/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-producto
+        port:
+          number: 8003
+  - match:
+    - uri:
+        exact: /productos/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-producto
+        port:
+          number: 8003
   - match:
     - uri:
         prefix: /productos
@@ -284,12 +439,52 @@ spec:
           number: 8003
   - match:
     - uri:
+        exact: /proveedores/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-proveedor
+        port:
+          number: 8006
+  - match:
+    - uri:
+        exact: /proveedores/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-proveedor
+        port:
+          number: 8006
+  - match:
+    - uri:
         prefix: /proveedores
     route:
     - destination:
         host: ms-proveedor
         port:
           number: 8006
+  - match:
+    - uri:
+        exact: /proyecciones/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-proyeccion-demanda
+        port:
+          number: 8004
+  - match:
+    - uri:
+        exact: /proyecciones/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-proyeccion-demanda
+        port:
+          number: 8004
   - match:
     - uri:
         prefix: /proyecciones

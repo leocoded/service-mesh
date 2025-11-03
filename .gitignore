@@ -72,3 +72,30 @@ htmlcov/
 # Temporary files
 tmp/
 temp/
+
+# Kubernetes
+*.yaml.bak
+*.yml.bak
+
+# Node.js (para Blockchain)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Blockchain artifacts
+artifacts/
+cache/
+
+# Docker volumes
+volumes/
+data/
+
+# Monitoring
+grafana-data/
+prometheus-data/
+
+# Scripts temporales
+*.tmp
+*.bak
