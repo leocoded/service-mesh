@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: kafka-external
+  namespace: service-mesh
+spec:
+  hosts:
+  - kafka.external
+  ports:
+  - number: 9092
+    name: kafka
+    protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: STATIC
+  endpoints:
+  - address: 172.17.0.1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: kafka-external-dr
+  namespace: service-mesh
+spec:
+  host: kafka.external
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kafka-external-vs
+  namespace: service-mesh
+spec:
+  hosts:
+  - kafka.external
+  tcp:
+  - match:
+    - port: 9092
+    route:
+    - destination:
+        host: kafka.external
+        port:
+          number: 9092

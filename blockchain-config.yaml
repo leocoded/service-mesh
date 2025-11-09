@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: blockchain-config
+  namespace: service-mesh
+type: Opaque
+stringData:
+  INFURA_PROJECT_ID: "f6d92809eab1422895caedb7b2805cc5"
+  PRIVATE_KEY: "0x4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
+  PINATA_API_KEY: "564a5977b339dcefdef0"
+  PINATA_SECRET_API_KEY: "7951c1beb60aa5261077e17a69337d74e84421d4efe550c9c2255bd15fe866ef"
+  CONTRACT_ADDRESS: ""

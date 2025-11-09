@@ -1,5 +1,5 @@
 # =====================================
-# Microservicios
+# Microservicios con bypass de Kafka
 # =====================================
 apiVersion: v1
 kind: Namespace
@@ -25,6 +25,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-bodega
@@ -34,7 +35,7 @@ spec:
             - containerPort: 8001
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
 ---
 apiVersion: v1
 kind: Service
@@ -68,6 +69,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-lote
@@ -77,7 +79,7 @@ spec:
             - containerPort: 8002
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
 ---
 apiVersion: v1
 kind: Service
@@ -111,6 +113,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-orden-compra
@@ -120,7 +123,7 @@ spec:
             - containerPort: 8005
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
 ---
 apiVersion: v1
 kind: Service
@@ -154,6 +157,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-producto
@@ -163,7 +167,7 @@ spec:
             - containerPort: 8003
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
 ---
 apiVersion: v1
 kind: Service
@@ -197,6 +201,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-proveedor
@@ -206,7 +211,7 @@ spec:
             - containerPort: 8006
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
 ---
 apiVersion: v1
 kind: Service
@@ -240,6 +245,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-proyeccion-demanda
@@ -249,7 +255,7 @@ spec:
             - containerPort: 8004
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
 ---
 apiVersion: v1
 kind: Service
@@ -283,6 +289,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-analytics
@@ -292,7 +299,7 @@ spec:
             - containerPort: 8010
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
 ---
 apiVersion: v1
 kind: Service
@@ -326,6 +333,7 @@ spec:
         version: v1
       annotations:
         sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "9092"
     spec:
       containers:
         - name: ms-blockchain
@@ -335,7 +343,10 @@ spec:
             - containerPort: 8007
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka.external:9092"
+              value: "192.168.0.62:9092"
+          envFrom:
+            - secretRef:
+                name: blockchain-config
 ---
 apiVersion: v1
 kind: Service
