@@ -2,19 +2,23 @@ from web3 import Web3
 import json
 import os
 from typing import Dict, Any
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class BlockchainService:
     def __init__(self):
-        # Usar Ganache local para smart contracts reales
-        self.infura_url = "http://127.0.0.1:8545"
+        # Conectar a Polygon Amoy via Infura
+        infura_project_id = os.getenv('INFURA_PROJECT_ID')
+        self.infura_url = f"https://polygon-amoy.infura.io/v3/{infura_project_id}"
         self.w3 = Web3(Web3.HTTPProvider(self.infura_url))
         
         # Verificar conexión
         if self.w3.is_connected():
-            print("✅ Conectado a Ganache local blockchain")
+            print("✅ Conectado a Polygon Amoy blockchain")
             print(f"📊 Último bloque: {self.w3.eth.block_number}")
         else:
-            print("❌ Error conectando a blockchain")
+            print("❌ Error conectando a Polygon Amoy")
     
     def create_trace_record(self, lote_id: str, event_type: str, ipfs_hash: str) -> Dict[str, Any]:
         """Crear registro en blockchain (simulado por ahora)"""
@@ -40,7 +44,7 @@ class BlockchainService:
             return {
                 "tx_hash": f"0x{hash(lote_id):x}"[-40:],
                 "block_number": 0,
-                "network": "local-simulation",
+                "network": "polygon-amoy",
                 "status": "failed",
                 "error": str(e)
             }

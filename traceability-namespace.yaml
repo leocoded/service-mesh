@@ -26,7 +26,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka-external:9092"
+              value: "kafka.event-mesh:9092"
           ports:
             - containerPort: 8008
 ---
@@ -64,7 +64,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka-external:9092"
+              value: "kafka.event-mesh:9092"
           ports:
             - containerPort: 8007
 ---

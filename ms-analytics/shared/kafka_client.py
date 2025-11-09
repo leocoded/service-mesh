@@ -10,11 +10,14 @@ class KafkaEventClient:
         # Auto-detectar si estamos en Docker o local
         if bootstrap_servers is None:
             import os
-            # Si estamos en Docker, usar nombre del servicio
-            if os.getenv('DOCKER_ENV') or os.path.exists('/.dockerenv'):
-                bootstrap_servers = "kafka:9092"
-            else:
-                bootstrap_servers = "localhost:9092"
+            # Priorizar variable de entorno
+            bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
+            if not bootstrap_servers:
+                # Si estamos en Docker, usar nombre del servicio
+                if os.getenv('DOCKER_ENV') or os.path.exists('/.dockerenv'):
+                    bootstrap_servers = "kafka:9092"
+                else:
+                    bootstrap_servers = "localhost:9092"
         self.bootstrap_servers = bootstrap_servers
         # Configuración con timeout corto para fallar rápido
         config = {

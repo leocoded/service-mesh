@@ -1,9 +1,14 @@
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from datetime import datetime, date, timedelta
 import uuid
 import os
 import json
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from shared.event_publisher import EventPublisher
+from shared.kafka_client import KafkaEventClient
 from models import (
     LoteCreate, LoteUpdate, LoteResponse, LoteFilter, 
     AlertaVencimiento, TipoAlmacenamiento
@@ -15,8 +20,24 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Habilitar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Simulación de base de datos en memoria
 lotes_db = {}
+
+# Event Publisher para Kafka (fallback)
+event_publisher = EventPublisher()
+
+# Kafka Event Client (Event-Driven Core)
+kafka_client = KafkaEventClient(bootstrap_servers=os.getenv('KAFKA_BOOTSTRAP_SERVERS'))
+kafka_client.set_service_name("inventory.ms-lote")
 
 def esta_vencido(fecha_vencimiento: date) -> bool:
     """Verificar si un lote está vencido"""
@@ -86,6 +107,24 @@ async def crear_lote(lote: LoteCreate):
     }
     
     lotes_db[lote_id] = nuevo_lote
+    
+    # Publicar evento a Event-Mesh (principal)
+    event_data = {
+        "lote_id": lote_id,
+        "producto_id": lote.id_producto,
+        "bodega_id": lote.id_bodega,
+        "cantidad_inicial": lote.cantidad_inicial,
+        "fecha_vencimiento": lote.fecha_vencimiento.isoformat(),
+        "tipo_almacenamiento": lote.tipo_almacenamiento
+    }
+    
+    # Publicar evento al Event-Driven Core (Kafka)
+    kafka_client.publish_event(
+        "inventory.lote.created",
+        event_data,
+        key=lote_id
+    )
+    
     return LoteResponse(**nuevo_lote)
 
 @app.get("/lotes", response_model=List[LoteResponse], tags=["Lotes"])
@@ -149,6 +188,17 @@ async def actualizar_lote(lote_id: str, lote_update: LoteUpdate):
     lote["esta_vencido"] = esta_vencido(lote["fecha_vencimiento"])
     lotes_db[lote_id] = lote
     
+    # Publicar evento de actualización
+    kafka_client.publish_event(
+        "inventory.lote.updated",
+        {
+            "lote_id": lote_id,
+            "campos_actualizados": list(update_data.keys()),
+            "cantidad_disponible": lote["cantidad_disponible"]
+        },
+        key=lote_id
+    )
+    
     return LoteResponse(**lote)
 
 @app.delete("/lotes/{lote_id}", tags=["Lotes"])
@@ -200,6 +250,18 @@ async def reservar_cantidad_lote(lote_id: str, cantidad: int):
     lote["cantidad_disponible"] -= cantidad
     lote["cantidad_reservada"] += cantidad
     lote["fecha_actualizacion"] = datetime.now()
+    
+    # Publicar evento de reserva
+    kafka_client.publish_event(
+        "inventory.lote.reserved",
+        {
+            "lote_id": lote_id,
+            "cantidad_reservada": cantidad,
+            "cantidad_disponible": lote["cantidad_disponible"],
+            "producto_id": lote["id_producto"]
+        },
+        key=lote_id
+    )
     
     return {
         "message": f"Se reservaron {cantidad} unidades del lote",

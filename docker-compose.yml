@@ -71,6 +71,30 @@ services:
       - ./ms-proveedor:/app
     restart: unless-stopped
 
+  ms-blockchain:
+    build:
+      context: ./ms-blockchain
+      dockerfile: Dockerfile
+    ports:
+      - "8007:8007"
+    environment:
+      - SERVICE_NAME=MS-Blockchain
+    volumes:
+      - ./ms-blockchain:/app
+    restart: unless-stopped
+
+  ms-analytics:
+    build:
+      context: ./ms-analytics
+      dockerfile: Dockerfile
+    ports:
+      - "8010:8010"
+    environment:
+      - SERVICE_NAME=MS-Analytics
+    volumes:
+      - ./ms-analytics:/app
+    restart: unless-stopped
+
 networks:
   default:
     name: service-mesh-network

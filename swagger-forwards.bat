@@ -35,12 +35,13 @@ start "MS-Proveedor" cmd /k "kubectl port-forward -n service-mesh svc/ms-proveed
 echo ▶️ MS-Proyeccion-Demanda en http://localhost:8004/docs
 start "MS-Proyeccion-Demanda" cmd /k "kubectl port-forward -n service-mesh svc/ms-proyeccion-demanda 8004:8004"
 
-echo ▶️ MS-Blockchain en http://localhost:8007/docs
-start "MS-Blockchain" cmd /k "kubectl port-forward -n service-mesh svc/ms-blockchain 8007:8007"
-
 echo ▶️ MS-Analytics en http://localhost:8010/docs
 start "MS-Analytics" cmd /k "kubectl port-forward -n service-mesh svc/ms-analytics 8010:8010"
-start "MS-Oracle" cmd /k "kubectl port-forward -n service-mesh svc/ms-oracle 8008:8008"
+
+echo.
+echo 📋 TRAZABILIDAD (Namespace: service-mesh):
+echo ▶️ MS-Blockchain en http://localhost:8007/docs
+start "MS-Blockchain" cmd /k "kubectl port-forward -n service-mesh svc/ms-blockchain 8007:8007"
 
 echo.
 echo ✅ Todos los port-forwards iniciados en 12 ventanas separadas
@@ -58,8 +59,10 @@ echo   - MS-Lote:         http://localhost:8002/docs
 echo   - MS-Orden-Compra: http://localhost:8005/docs
 echo   - MS-Proveedor:    http://localhost:8006/docs
 echo   - MS-Proyeccion:   http://localhost:8004/docs
-echo   - MS-Blockchain:   http://localhost:8007/docs
 echo   - MS-Analytics:    http://localhost:8010/docs
+echo.
+echo 🔍 TRAZABILIDAD:
+echo   - MS-Blockchain:   http://localhost:8007/docs
 echo.
 echo 🌐 APIs REST (Gateway):
 echo   - http://localhost/productos

@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-mesh-proxy
+  namespace: service-mesh
+  labels:
+    app: event-mesh-proxy
+    tier: infrastructure
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-mesh-proxy
+  template:
+    metadata:
+      labels:
+        app: event-mesh-proxy
+        tier: infrastructure
+    spec:
+      containers:
+        - name: event-mesh-proxy
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/conf.d
+      volumes:
+        - name: config
+          configMap:
+            name: event-mesh-proxy-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: event-mesh-proxy-config
+  namespace: service-mesh
+data:
+  default.conf: |
+    upstream kafka {
+        server host.docker.internal:9092;
+    }
+    upstream redis {
+        server host.docker.internal:6379;
+    }
+    server {
+        listen 80;
+        location /kafka {
+            proxy_pass http://kafka;
+        }
+        location /redis {
+            proxy_pass http://redis;
+        }
+        location /health {
+            return 200 "Event Mesh Proxy OK";
+            add_header Content-Type text/plain;
+        }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-mesh-proxy
+  namespace: service-mesh
+  labels:
+    tier: infrastructure
+spec:
+  selector:
+    app: event-mesh-proxy
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http

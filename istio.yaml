@@ -22,11 +22,14 @@ spec:
     metadata:
       labels:
         app: ms-bodega
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: ms-bodega
           image: ms-bodega:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8001
 ---
@@ -35,6 +38,8 @@ kind: Service
 metadata:
   name: ms-bodega
   namespace: service-mesh
+  labels:
+    app: ms-bodega
 spec:
   selector:
     app: ms-bodega
@@ -57,11 +62,14 @@ spec:
     metadata:
       labels:
         app: ms-lote
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: ms-lote
           image: ms-lote:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8002
 ---
@@ -70,6 +78,8 @@ kind: Service
 metadata:
   name: ms-lote
   namespace: service-mesh
+  labels:
+    app: ms-lote
 spec:
   selector:
     app: ms-lote
@@ -92,11 +102,14 @@ spec:
     metadata:
       labels:
         app: ms-orden-compra
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: ms-orden-compra
           image: ms-orden-compra:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8005
 ---
@@ -105,6 +118,8 @@ kind: Service
 metadata:
   name: ms-orden-compra
   namespace: service-mesh
+  labels:
+    app: ms-orden-compra
 spec:
   selector:
     app: ms-orden-compra
@@ -127,11 +142,14 @@ spec:
     metadata:
       labels:
         app: ms-producto
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: ms-producto
           image: ms-producto:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8003
 ---
@@ -140,6 +158,8 @@ kind: Service
 metadata:
   name: ms-producto
   namespace: service-mesh
+  labels:
+    app: ms-producto
 spec:
   selector:
     app: ms-producto
@@ -162,11 +182,14 @@ spec:
     metadata:
       labels:
         app: ms-proveedor
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: ms-proveedor
           image: ms-proveedor:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8006
 ---
@@ -175,6 +198,8 @@ kind: Service
 metadata:
   name: ms-proveedor
   namespace: service-mesh
+  labels:
+    app: ms-proveedor
 spec:
   selector:
     app: ms-proveedor
@@ -197,11 +222,14 @@ spec:
     metadata:
       labels:
         app: ms-proyeccion-demanda
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: ms-proyeccion-demanda
           image: ms-proyeccion-demanda:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8004
 ---
@@ -210,6 +238,8 @@ kind: Service
 metadata:
   name: ms-proyeccion-demanda
   namespace: service-mesh
+  labels:
+    app: ms-proyeccion-demanda
 spec:
   selector:
     app: ms-proyeccion-demanda
@@ -232,11 +262,14 @@ spec:
     metadata:
       labels:
         app: ms-analytics
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: ms-analytics
           image: ms-analytics:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           ports:
             - containerPort: 8010
 ---
@@ -245,12 +278,57 @@ kind: Service
 metadata:
   name: ms-analytics
   namespace: service-mesh
+  labels:
+    app: ms-analytics
 spec:
   selector:
     app: ms-analytics
   ports:
     - port: 8010
       targetPort: 8010
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-blockchain
+  namespace: service-mesh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-blockchain
+  template:
+    metadata:
+      labels:
+        app: ms-blockchain
+        version: v1
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: ms-blockchain
+          image: ms-blockchain:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8007
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.event-mesh.svc.cluster.local:9092"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-blockchain
+  namespace: service-mesh
+  labels:
+    app: ms-blockchain
+spec:
+  selector:
+    app: ms-blockchain
+  ports:
+    - port: 8007
+      targetPort: 8007
       name: http
 
 ---
@@ -307,52 +385,12 @@ spec:
           number: 8001
   - match:
     - uri:
-        exact: /bodegas/docs
-    rewrite:
-      uri: /docs
-    route:
-    - destination:
-        host: ms-bodega
-        port:
-          number: 8001
-  - match:
-    - uri:
-        exact: /bodegas/openapi.json
-    rewrite:
-      uri: /openapi.json
-    route:
-    - destination:
-        host: ms-bodega
-        port:
-          number: 8001
-  - match:
-    - uri:
         prefix: /bodegas
     route:
     - destination:
         host: ms-bodega
         port:
           number: 8001
-  - match:
-    - uri:
-        exact: /lotes/docs
-    rewrite:
-      uri: /docs
-    route:
-    - destination:
-        host: ms-lote
-        port:
-          number: 8002
-  - match:
-    - uri:
-        exact: /lotes/openapi.json
-    rewrite:
-      uri: /openapi.json
-    route:
-    - destination:
-        host: ms-lote
-        port:
-          number: 8002
   - match:
     - uri:
         exact: /lotes/docs
@@ -493,3 +531,31 @@ spec:
         host: ms-proyeccion-demanda
         port:
           number: 8004
+  - match:
+    - uri:
+        exact: /blockchain/docs
+    rewrite:
+      uri: /docs
+    route:
+    - destination:
+        host: ms-blockchain
+        port:
+          number: 8007
+  - match:
+    - uri:
+        exact: /blockchain/openapi.json
+    rewrite:
+      uri: /openapi.json
+    route:
+    - destination:
+        host: ms-blockchain
+        port:
+          number: 8007
+  - match:
+    - uri:
+        prefix: /blockchain
+    route:
+    - destination:
+        host: ms-blockchain
+        port:
+          number: 8007

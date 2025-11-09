@@ -1,9 +1,13 @@
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
 from datetime import datetime
 import uuid
 import os
 import json
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from shared.kafka_client import KafkaEventClient
 from models import (
     ProductoCreate, ProductoUpdate, ProductoResponse, ProductoFilter,
     ProductoStock, CategoriaProducto, UnidadMedida
@@ -14,6 +18,19 @@ app = FastAPI(
     description="Microservicio para gestión de productos",
     version="1.0.0"
 )
+
+# Habilitar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Kafka Event Client (Event-Driven Core)
+kafka_client = KafkaEventClient()
+kafka_client.set_service_name("catalog.ms-producto")
 
 # Simulación de base de datos en memoria
 productos_db = {}
@@ -35,8 +52,11 @@ def cargar_productos_desde_json():
             "unidad_medida": producto["unidad_medida"],
             "precio_unitario": producto["precio_unitario"],
             "codigo_barras": producto["codigo_barras"],
-            "peso_unitario": producto["peso_unitario"],
+            "concentracion": producto.get("concentracion"),
+            "principio_activo": producto.get("principio_activo"),
+            "laboratorio": producto.get("laboratorio"),
             "requiere_refrigeracion": producto["requiere_refrigeracion"],
+            "requiere_receta": producto.get("requiere_receta", False),
             "vida_util_dias": producto["vida_util_dias"],
             "activo": producto.get("activo", True),
             "fecha_creacion": datetime.now(),
@@ -67,8 +87,11 @@ async def crear_producto(producto: ProductoCreate):
         "unidad_medida": producto.unidad_medida,
         "precio_unitario": producto.precio_unitario,
         "codigo_barras": producto.codigo_barras,
-        "peso_unitario": producto.peso_unitario,
+        "concentracion": producto.concentracion,
+        "principio_activo": producto.principio_activo,
+        "laboratorio": producto.laboratorio,
         "requiere_refrigeracion": producto.requiere_refrigeracion,
+        "requiere_receta": producto.requiere_receta,
         "vida_util_dias": producto.vida_util_dias,
         "activo": True,
         "fecha_creacion": now,
@@ -78,6 +101,26 @@ async def crear_producto(producto: ProductoCreate):
     }
     
     productos_db[producto_id] = nuevo_producto
+    
+    # Publicar evento al Event-Driven Core (Kafka)
+    kafka_client.publish_event(
+        "catalog.producto.created",
+        {
+            "producto_id": producto_id,
+            "nombre": producto.nombre,
+            "categoria": producto.categoria,
+            "codigo_barras": producto.codigo_barras,
+            "concentracion": producto.concentracion,
+            "principio_activo": producto.principio_activo,
+            "laboratorio": producto.laboratorio,
+            "requiere_refrigeracion": producto.requiere_refrigeracion,
+            "requiere_receta": producto.requiere_receta,
+            "vida_util_dias": producto.vida_util_dias,
+            "precio_unitario": producto.precio_unitario
+        },
+        key=producto_id
+    )
+    
     print(f"Producto creado: {nuevo_producto}")
     return ProductoResponse(**nuevo_producto)
 

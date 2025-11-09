@@ -10,17 +10,14 @@ class KafkaEventClient:
         # Auto-detectar si estamos en Docker o local
         if bootstrap_servers is None:
             import os
-            # Usar variable de entorno si está disponible
+            # Priorizar variable de entorno
             bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
-            if bootstrap_servers is None:
-                # Si estamos en Kubernetes, usar servicio externo
-                if os.getenv('KUBERNETES_SERVICE_HOST'):
-                    bootstrap_servers = "kafka-external:9092"
+            if not bootstrap_servers:
                 # Si estamos en Docker, usar nombre del servicio
-                elif os.getenv('DOCKER_ENV') or os.path.exists('/.dockerenv'):
+                if os.getenv('DOCKER_ENV') or os.path.exists('/.dockerenv'):
                     bootstrap_servers = "kafka:9092"
                 else:
-                    bootstrap_servers = "localhost:9092"
+                    bootstrap_servers = "host.docker.internal:9092"
         self.bootstrap_servers = bootstrap_servers
         # Configuración con timeout corto para fallar rápido
         config = {
@@ -70,6 +67,7 @@ class KafkaEventClient:
     
     def create_consumer(self, topics: list, group_id: str):
         """Crear consumer para topics específicos"""
+        print(f"🔍 DEBUG: Creating consumer with bootstrap_servers = {self.bootstrap_servers}")
         consumer = Consumer({
             'bootstrap.servers': self.bootstrap_servers,
             'group.id': group_id,

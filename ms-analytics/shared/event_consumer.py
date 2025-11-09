@@ -6,7 +6,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class EventConsumer:
-    def __init__(self, topics: list, group_id: str, bootstrap_servers='localhost:9092'):
+    def __init__(self, topics: list, group_id: str, bootstrap_servers=None):
+        if bootstrap_servers is None:
+            import os
+            bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
         self.consumer = Consumer({
             'bootstrap.servers': bootstrap_servers,
             'group.id': group_id,

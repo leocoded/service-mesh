@@ -10,8 +10,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from shared.kafka_client import KafkaEventClient
 from models import TraceRecord, TraceResponse
 from blockchain_service import BlockchainService
-from ipfs_real_service import IPFSRealService
+from ipfs_pinata_service import IPFSPinataService
 from smart_contract_service import SmartContractService
+import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 app = FastAPI(
     title="MS-Blockchain API",
@@ -33,7 +38,7 @@ blockchain_records = {}
 
 # Servicios
 blockchain_service = BlockchainService()
-ipfs_service = IPFSRealService()
+ipfs_service = IPFSPinataService()
 smart_contract_service = SmartContractService(blockchain_service.w3)
 
 def handle_lote_created(data: Dict[Any, Any], key: str):
@@ -43,8 +48,8 @@ def handle_lote_created(data: Dict[Any, Any], key: str):
     # 1. Almacenar datos detallados en IPFS
     ipfs_hash = ipfs_service.store_data(data["data"])
     
-    # 2. Crear registro en smart contract REAL
-    private_key = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"  # Ganache account 0
+    # 2. Crear registro en smart contract en Polygon Amoy
+    private_key = os.getenv('PRIVATE_KEY')
     blockchain_result = smart_contract_service.record_trace(
         lote_id=key,
         producto_id=data["data"].get("producto_id", "UNKNOWN"),
@@ -212,6 +217,74 @@ def handle_lote_despachado(data: Dict[Any, Any], key: str):
     blockchain_records[trace_id] = record
     print(f"✅ Despacho registrado: {trace_id}")
 
+def handle_stock_reserved(data: Dict[Any, Any], key: str):
+    """Handler para eventos de reserva de stock en bodega"""
+    print(f"🔒 Procesando reserva de stock: {key}")
+    
+    # Almacenar en IPFS
+    ipfs_hash = ipfs_service.store_data(data["data"])
+    
+    # Registrar en blockchain
+    private_key = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    blockchain_result = smart_contract_service.record_trace(
+        lote_id=f"STOCK-{key}",
+        producto_id=data["data"].get("producto_id", "UNKNOWN"),
+        ipfs_hash=ipfs_hash,
+        event_type=2,  # RESERVED = 2
+        private_key=private_key
+    )
+    
+    # Crear registro
+    trace_id = str(uuid.uuid4())
+    record = {
+        "trace_id": trace_id,
+        "lote_id": f"STOCK-{key}",
+        "event_type": "STOCK_RESERVED",
+        "data": data["data"],
+        "timestamp": datetime.now(),
+        "blockchain_tx": blockchain_result["tx_hash"],
+        "ipfs_hash": ipfs_hash,
+        "status": blockchain_result["status"],
+        "block_number": blockchain_result.get("block_number", 0)
+    }
+    
+    blockchain_records[trace_id] = record
+    print(f"✅ Reserva de stock registrada: {trace_id}")
+
+def handle_stock_sold(data: Dict[Any, Any], key: str):
+    """Handler para eventos de venta de stock en bodega"""
+    print(f"💰 Procesando venta de stock: {key}")
+    
+    # Almacenar en IPFS
+    ipfs_hash = ipfs_service.store_data(data["data"])
+    
+    # Registrar en blockchain
+    private_key = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    blockchain_result = smart_contract_service.record_trace(
+        lote_id=f"STOCK-{key}",
+        producto_id=data["data"].get("producto_id", "UNKNOWN"),
+        ipfs_hash=ipfs_hash,
+        event_type=5,  # SOLD = 5
+        private_key=private_key
+    )
+    
+    # Crear registro
+    trace_id = str(uuid.uuid4())
+    record = {
+        "trace_id": trace_id,
+        "lote_id": f"STOCK-{key}",
+        "event_type": "STOCK_SOLD",
+        "data": data["data"],
+        "timestamp": datetime.now(),
+        "blockchain_tx": blockchain_result["tx_hash"],
+        "ipfs_hash": ipfs_hash,
+        "status": blockchain_result["status"],
+        "block_number": blockchain_result.get("block_number", 0)
+    }
+    
+    blockchain_records[trace_id] = record
+    print(f"✅ Venta de stock registrada: {trace_id}")
+
 def handle_producto_created(data: Dict[Any, Any], key: str):
     """Handler para eventos de creación de producto"""
     print(f"📊 Procesando creación de producto: {key}")
@@ -250,30 +323,51 @@ def handle_producto_created(data: Dict[Any, Any], key: str):
 
 def start_event_consumer():
     """Iniciar consumer de eventos en hilo separado"""
-    kafka_client = KafkaEventClient()
+    print("🔍 DEBUG: start_event_consumer called")
+    import os
+    kafka_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'host.docker.internal:9092')
+    print(f"🔍 DEBUG: KAFKA_BOOTSTRAP_SERVERS env var = {os.getenv('KAFKA_BOOTSTRAP_SERVERS')}")
+    print(f"🔍 DEBUG: Using kafka_servers = {kafka_servers}")
+    kafka_client = KafkaEventClient(bootstrap_servers=kafka_servers)
+    print(f"🔍 DEBUG: KafkaEventClient bootstrap_servers = {kafka_client.bootstrap_servers}")
     
     handlers = {
-        "catalog.producto.created": handle_producto_created,
         "inventory.lote.created": handle_lote_created,
         "inventory.lote.updated": handle_lote_updated,
         "inventory.lote.reserved": handle_lote_reserved,
         "warehouse.lote.ingresado": handle_lote_ingresado,
-        "warehouse.lote.despachado": handle_lote_despachado
+        "warehouse.lote.despachado": handle_lote_despachado,
+        "warehouse.stock.reserved": handle_stock_reserved,
+        "warehouse.stock.sold": handle_stock_sold,
+        "catalog.producto.created": handle_producto_created
     }
     
     # Iniciar consumo
+    print(f"🔍 DEBUG: About to consume from {kafka_client.bootstrap_servers}")
+    print(f"🔍 DEBUG: Topics to subscribe: {list(handlers.keys())}")
     kafka_client.consume_events(
         topics=list(handlers.keys()),
         group_id="traceability.blockchain-service",
         handlers=handlers
     )
 
-@app.on_event("startup")
-async def startup_event():
-    """Iniciar consumer al arrancar la aplicación"""
-    consumer_thread = threading.Thread(target=start_event_consumer, daemon=True)
-    consumer_thread.start()
-    print("🚀 MS-Blockchain iniciado - Escuchando eventos...")
+# Inicializar consumer directamente
+print("🔍 DEBUG: Iniciando consumer directamente...")
+import os
+kafka_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'host.docker.internal:9092')
+print(f"🔍 DEBUG: kafka_servers = {kafka_servers}")
+consumer_thread = threading.Thread(target=start_event_consumer, daemon=True)
+consumer_thread.start()
+print(f"🚀 MS-Blockchain iniciado - Escuchando eventos en {kafka_servers}...")
+print("📡 Topics suscritos:")
+print("   - inventory.lote.created")
+print("   - inventory.lote.updated")
+print("   - inventory.lote.reserved")
+print("   - warehouse.lote.ingresado")
+print("   - warehouse.lote.despachado")
+print("   - warehouse.stock.reserved")
+print("   - warehouse.stock.sold")
+print("   - catalog.producto.created")
 
 @app.get("/", tags=["Health"])
 async def root():

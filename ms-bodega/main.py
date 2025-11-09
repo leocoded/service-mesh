@@ -5,6 +5,9 @@ from datetime import datetime
 import uuid
 import os
 import json
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from shared.kafka_client import KafkaEventClient
 from models import BodegaCreate, BodegaUpdate, BodegaResponse, BodegaFilter
 
 app = FastAPI(
@@ -12,6 +15,10 @@ app = FastAPI(
     description="Microservicio para gestión de bodegas y ubicaciones geográficas",
     version="1.0.0"
 )
+
+# Kafka Event Client (Event-Driven Core)
+kafka_client = KafkaEventClient()
+kafka_client.set_service_name("warehouse.ms-bodega")
 
 # Simulación de base de datos en memoria
 bodegas_db = {}
@@ -166,6 +173,18 @@ async def reservar_cantidad(bodega_id: str, cantidad: int):
     bodega["cantidad_reservada"] += cantidad
     bodega["fecha_actualizacion"] = datetime.now()
     
+    # Publicar evento de reserva
+    kafka_client.publish_event(
+        "warehouse.stock.reserved",
+        {
+            "bodega_id": bodega_id,
+            "cantidad_reservada": cantidad,
+            "disponible_restante": bodega["cantidad_disponible"],
+            "producto_id": bodega["id_producto"]
+        },
+        key=bodega_id
+    )
+    
     return {
         "message": f"Se reservaron {cantidad} unidades",
         "cantidad_disponible": bodega["cantidad_disponible"],
@@ -190,11 +209,72 @@ async def vender_cantidad(bodega_id: str, cantidad: int):
     bodega["cantidad_vendida"] += cantidad
     bodega["fecha_actualizacion"] = datetime.now()
     
+    # Publicar evento de venta
+    kafka_client.publish_event(
+        "warehouse.stock.sold",
+        {
+            "bodega_id": bodega_id,
+            "cantidad_vendida": cantidad,
+            "disponible_restante": bodega["cantidad_disponible"],
+            "producto_id": bodega["id_producto"]
+        },
+        key=bodega_id
+    )
+    
     return {
         "message": f"Se vendieron {cantidad} unidades",
         "cantidad_reservada": bodega["cantidad_reservada"],
         "cantidad_vendida": bodega["cantidad_vendida"]
     }
+
+@app.post("/bodegas/{bodega_id}/lotes/{lote_id}/ingresar", tags=["Trazabilidad"])
+async def ingresar_lote(bodega_id: str, lote_id: str, cantidad: int):
+    """Registrar ingreso de lote a bodega (Caso de negocio)"""
+    if bodega_id not in bodegas_db:
+        raise HTTPException(status_code=404, detail="Bodega no encontrada")
+    
+    bodega = bodegas_db[bodega_id]
+    bodega["fecha_actualizacion"] = datetime.now()
+    
+    # Publicar evento crítico para blockchain
+    kafka_client.publish_event(
+        "warehouse.lote.ingresado",
+        {
+            "lote_id": lote_id,
+            "bodega_id": bodega_id,
+            "cantidad": cantidad,
+            "ubicacion": bodega["ubicacion_geografica"],
+            "timestamp": datetime.now().isoformat()
+        },
+        key=lote_id
+    )
+    
+    return {"message": f"Lote {lote_id} ingresado a bodega {bodega_id}"}
+
+@app.post("/bodegas/{bodega_id}/lotes/{lote_id}/despachar", tags=["Trazabilidad"])
+async def despachar_lote(bodega_id: str, lote_id: str, cantidad: int, destino: str):
+    """Registrar despacho de lote desde bodega (Caso de negocio)"""
+    if bodega_id not in bodegas_db:
+        raise HTTPException(status_code=404, detail="Bodega no encontrada")
+    
+    bodega = bodegas_db[bodega_id]
+    bodega["fecha_actualizacion"] = datetime.now()
+    
+    # Publicar evento crítico para blockchain
+    kafka_client.publish_event(
+        "warehouse.lote.despachado",
+        {
+            "lote_id": lote_id,
+            "bodega_origen": bodega_id,
+            "destino": destino,
+            "cantidad": cantidad,
+            "ubicacion_origen": bodega["ubicacion_geografica"],
+            "timestamp": datetime.now().isoformat()
+        },
+        key=lote_id
+    )
+    
+    return {"message": f"Lote {lote_id} despachado desde {bodega_id} hacia {destino}"}
 
 if __name__ == "__main__":
     import uvicorn

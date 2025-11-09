@@ -7,7 +7,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 class EventPublisher:
-    def __init__(self, bootstrap_servers='localhost:9092'):
+    def __init__(self, bootstrap_servers=None):
+        if bootstrap_servers is None:
+            import os
+            bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'host.docker.internal:9092')
         self.producer = Producer({
             'bootstrap.servers': bootstrap_servers,
             'client.id': 'service-mesh-publisher'
